@@ -23,11 +23,18 @@ import Data.Maybe
 import Data.HashMap.Strict as HM
 import Data.HashSet as HS
 import Data.Text
+import Data.Version (Version(..), showVersion)
 
 import Network
 import Network.WebSockets
 import Yesod hiding (Update, Request)
 import Yesod.Static
+
+-- import Paths_monitoring (version)
+-- linker error again :(
+version :: Version
+version = Version { versionBranch = [0, 1, 0, 0]
+                  , versionTags = [] }
 
 type GroupId = Text
 type CounterId = Text
@@ -122,11 +129,22 @@ getHomeR = defaultLayout $ do
   addScript     $ StaticR listener_js
   setTitle "main"
   homeW
+  footerW
 
 homeW :: Widget
 homeW = [whamlet|
 <body onload="listenEvents(4000)">
   <div id="monitor">
+|]
+
+footerW :: Widget
+footerW = [whamlet|
+<div id="footer">
+  <p> Produced by
+      <a href="http://www.yesodweb.com"> Yesod
+      and
+      <a href="https://github.com/pxqr/monitoring"> monitoring
+      version #{showVersion version}
 |]
 
 newMonitor :: IO Monitor
