@@ -8,6 +8,7 @@ module System.Monitoring
        , signalEvent
        , Monitor(..)
        , Event(..)
+       , EventStream
        ) where
 
 import Control.Applicative
@@ -26,10 +27,12 @@ import Network.WebSockets
 import Yesod hiding (Update, Request)
 import Yesod.Static
 
+type GroupId = Text
 type CounterId = Text
 
-data Event = Update CounterId Int
-           | Remove CounterId
+data Event = Update GroupId Object
+           | Remove GroupId
+              deriving Show
 
 $(deriveJSON id ''Event)
 
@@ -61,7 +64,7 @@ eventServer m = runServer "0" 4000 (app m)
 
 data Monitor = Monitor
   { signal    :: EventStream
-  , cached    :: TVar (HashMap CounterId Int)
+  , cached    :: TVar (HashMap GroupId Object)
   , getStatic :: Static
   }
 

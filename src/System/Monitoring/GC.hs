@@ -1,10 +1,12 @@
--- TODO GHC CPP
+{-# LANGUAGE TemplateHaskell #-}
 module System.Monitoring.GC
        ( updateStats
        , rtsStats
        ) where
 
 import Control.Monad
+import Data.Aeson
+import Data.Aeson.TH
 import GHC.Stats
 import Foreign.Ptr
 import Foreign.Concurrent
@@ -18,8 +20,13 @@ onNextGC = void . newForeignPtr nullPtr
 onGC :: IO () -> IO ()
 onGC action = onNextGC $ action >> onGC action
 
+$(deriveJSON id ''GCStats)
+
 signalStats :: Monitor -> GCStats -> IO ()
-signalStats es GCStats {..} = do
+signalStats es stats = signalEvent es $ Update "GC" x
+  where
+    Object x = toJSON stats
+  {-
   signalEvent es $ Update "numGCs"                 $ fromIntegral numGcs
 
   signalEvent es $ Update "bytesAllocated"         $ fromIntegral bytesAllocated
@@ -42,7 +49,7 @@ signalStats es GCStats {..} = do
   signalEvent es $ Update "gcWallSeconds"          $ floor gcWallSeconds
   signalEvent es $ Update "cpuSeconds"             $ floor cpuSeconds
   signalEvent es $ Update "wallSeconds"            $ floor wallSeconds
-
+-}
 
 updateStats :: Monitor -> IO ()
 updateStats es = getGCStats >>= signalStats es

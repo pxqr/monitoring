@@ -1,44 +1,63 @@
-function counterBody(id, val)
+function createGroup(gid)
 {
-    return id + ": " + val;
-}
+    console.log("adding " + gid);
 
-function add(id, val)
-{
-    console.log("adding " + id);
-
-    var counter = document.createElement("div");
-    counter.setAttribute("id", id);
-    counter.innerHTML = counterBody(id, val)
+    var gelem = document.createElement("table");
+    gelem.setAttribute("id", gid);
+    gelem.setAttribute("class", "group");
+    gelem.innerHTML = gid;
 
     var monitor = document.getElementById("monitor");
-    monitor.appendChild(counter);
+    monitor.appendChild(gelem);
+    return gelem;
 }
 
-function refresh(id, val)
+function removeGroup(gid)
 {
-    console.log("refresh " + id);
-
-    var counter = document.getElementById(id);
-    counter.innerHTML = counterBody(id, val);
-}
-
-function remove(id)
-{
-    console.log("removing " + id);
+    console.log("removing " + gid);
 
     var monitor = getElementById("monitor");
-    var counter = getElementById(id);
-    monitor.removeChild(counter);
+    var group   = getElementById(gid);
+    monitor.removeChild(group);
 }
 
-function update(gid, val)
+function getGroup(gid)
 {
-    var elem = document.getElementById(gid);
-    if (elem == null) {
-        add(id, val);
-    } else {
-        refresh(id, val);
+    var gelem = document.getElementById(gid);
+    return gelem ? gelem : createGroup(gid);
+}
+
+function createCounter(gid, cid)
+{
+    console.log("adding counter " + cid);
+
+    var celem = document.createElement("tr");
+    celem.setAttribute("id", cid);
+    celem.setAttribute("class", "counterEntry");
+    celem.innerHTML =
+        "<td class='counterName'>" + cid + "</td>\
+         <td class='counterValue'>   N/A    </td>"
+
+    var gelem = getGroup(gid);
+    gelem.appendChild(celem);
+    return celem;
+}
+
+function getCounterValue(gid, cid)
+{
+    var celem = document.getElementById(cid);
+    console.log("get counter " + celem);
+    var counter = celem ? celem : createCounter(gid, cid);
+    return counter.getElementsByClassName("counterValue")[0];
+}
+
+function updateGroup(gid, counters)
+{
+    console.log("refresh " + gid);
+
+    for (var cid in counters) {
+        var celem = getCounterValue(gid, cid);
+        celem.innerHTML = counters[cid];
     }
 }
 
@@ -48,11 +67,11 @@ function eventHandler(ev)
     console.log("event handler " + msg);
 
     if (msg.Update) {
-        update(msg.Update[0], msg.Update[1]);
+        updateGroup(msg.Update[0], msg.Update[1]);
     } else if (msg.Remove) {
-        remove(msg.Remove[0]);
+        removeGroup(msg.Remove[0]);
     } else {
-        consol.log("unknown message id " + msg);
+        consol.log("unknown message " + msg);
     }
 }
 
