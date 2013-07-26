@@ -1,9 +1,25 @@
+var sock = null;
+
+function unsubscribeGroup(gid)
+{
+    var msg = { Unsubscribe : gid };
+    sock.send(JSON.stringify(msg));
+}
+
+function subscribeGroup(gid)
+{
+    var msg = { Subscribe : gid };
+    sock.send(JSON.stringify(msg));
+}
+
 function toggleGroup(gid)
 {
     var gbody = document.getElementById(gid);
     if (gbody.style.display == "none") {
+        subscribeGroup(gid);
         gbody.style.display = "block";
     } else {
+        unsubscribeGroup(gid);
         gbody.style.display = "none";
     }
 }
@@ -116,7 +132,7 @@ function listenEvents(port)
     if ("WebSocket" in window) {
         var ws = new WebSocket("ws://localhost:" + port);
         ws.onopen = function() {
-            // ws.send("Message to send");
+            sock = ws;
         };
         ws.onmessage = eventHandler;
         ws.onclose   = reconnect(port);
