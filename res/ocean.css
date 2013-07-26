@@ -7,6 +7,18 @@ a[href]:link    { color:           rgb(196,69,29);  }
 a[href]:visited { color:           rgb(171,105,84); }
 a[href]:hover   { text-decoration: underline;       }
 
+#header {
+    background-color: #293845;
+    color:            #DDD;
+    padding:          0.2em;
+    text-align:       right;
+    border-top:       5px solid rgb(78, 98, 114)
+}
+
+#header a:link, #header a:visited {
+    color: #DDD;
+}
+
 #monitor {
     background-color: white;
 
@@ -20,7 +32,10 @@ a[href]:hover   { text-decoration: underline;       }
     background-color: #ddd;
     color:            #aaa;
     text-align:       center;
+
     padding:          0.5em;
+    bottom:           0;
+    position:         absolute;
 
     width:            100%;
     height:           3em;
@@ -31,7 +46,7 @@ a[href]:hover   { text-decoration: underline;       }
 }
 
 .group {
-
+    padding-top:      2em;
 }
 
 .groupCaption {

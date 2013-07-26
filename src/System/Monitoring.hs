@@ -127,9 +127,18 @@ getHomeR :: Handler RepHtml
 getHomeR = defaultLayout $ do
   addStylesheet $ StaticR style_css
   addScript     $ StaticR listener_js
-  setTitle "main"
+  setTitle "monitoring"
+  headerW
   homeW
   footerW
+
+headerW :: Widget
+headerW = [whamlet|
+<div id="header">
+  Style
+  <a href="#" onclick="setStyle('Ocean')">    Ocean
+  <a href="#" onclick="setStyle('Charcoal')"> Charcoal
+|]
 
 homeW :: Widget
 homeW = [whamlet|
