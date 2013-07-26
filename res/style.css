@@ -1,2 +1,23 @@
 body {
+    background-color: #202020;
+}
+
+#monitor {
+    background-color: #232323;
+}
+
+.group {
+    background-color: #FFAAFF;
+}
+
+.counterEntry {
+    background-color: #AAAAAA;
+}
+
+.counterName {
+    background-color: #BBBBBB;
+}
+
+.counterValue {
+    background-color: #CCCCCC;
 }
