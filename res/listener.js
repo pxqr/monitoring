@@ -1,15 +1,34 @@
+function toggleGroup(gid)
+{
+    var gbody = document.getElementById(gid);
+    if (gbody.style.display == "none") {
+        gbody.style.display = "block";
+    } else {
+        gbody.style.display = "none";
+    }
+}
+
 function createGroup(gid)
 {
     console.log("adding " + gid);
 
-    var gelem = document.createElement("table");
-    gelem.setAttribute("id", gid);
+    var gelem = document.createElement("div");
     gelem.setAttribute("class", "group");
-    gelem.innerHTML = gid;
+
+    var gcap = document.createElement("div");
+    gcap.setAttribute("class", "groupCaption");
+    gcap.setAttribute("onclick", "toggleGroup('" + gid + "')");
+    gcap.innerHTML = gid;
+    gelem.appendChild(gcap);
+
+    var gbody = document.createElement("table");
+    gbody.setAttribute("id", gid);
+    gelem.appendChild(gbody);
 
     var monitor = document.getElementById("monitor");
     monitor.appendChild(gelem);
-    return gelem;
+
+    return gbody;
 }
 
 function removeGroup(gid)
@@ -27,6 +46,11 @@ function getGroup(gid)
     return gelem ? gelem : createGroup(gid);
 }
 
+function toggleGraph(cid)
+{
+    var celem = document.getElementById(cid);
+}
+
 function createCounter(gid, cid)
 {
     console.log("adding counter " + cid);
@@ -34,6 +58,7 @@ function createCounter(gid, cid)
     var celem = document.createElement("tr");
     celem.setAttribute("id", cid);
     celem.setAttribute("class", "counterEntry");
+    celem.setAttribute("onclick", "toggleGraph('" + cid + "')");
     celem.innerHTML =
         "<td class='counterName'>" + cid + "</td>\
          <td class='counterValue'>   N/A    </td>"

@@ -20,4 +20,5 @@ body {
 
 .counterValue {
     background-color: #CCCCCC;
+    text-align:       right;
 }
