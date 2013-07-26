@@ -36,6 +36,10 @@ data Event = Update GroupId Object
 
 $(deriveJSON id ''Event)
 
+instance WebSocketsData Event where
+  toLazyByteString = encode
+  fromLazyByteString = error "event not receivable"
+
 type EventStream = TChan Event
 
 waitForEvent :: EventStream -> IO Event
@@ -47,16 +51,13 @@ signalEvent Monitor {..} (Update cid val)
       writeTChan signal (Update cid val)
       modifyTVar' cached $ HM.insert cid val
 
-sendEvent :: Event -> WebSockets Hybi00 ()
-sendEvent = send . DataMessage . Text . encode
-
 app :: Monitor -> Request -> WebSockets Hybi00 ()
 app Monitor {..} req = do
   acceptRequest req
   (ch', cur) <- liftIO $ atomically $
        (,) <$> dupTChan signal <*> readTVar cached
-  mapM_ (sendEvent . uncurry Update) (toList cur)
-  forever $ sendEvent =<< liftIO (waitForEvent ch')
+  mapM_ (sendTextData . uncurry Update) (toList cur)
+  forever $ sendTextData =<< liftIO (waitForEvent ch')
 
 eventServer :: Monitor -> IO ()
 eventServer m = runServer "0" 4000 (app m)
