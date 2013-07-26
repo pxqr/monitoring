@@ -1,0 +1,65 @@
+/* color reference
+charcoal gray: #232323;
+*/
+
+body {
+    background-color: DimGray;
+    margin:           0em;
+}
+
+a[href]:link    { color:           rgb(196,69,29);  }
+a[href]:visited { color:           rgb(171,105,84); }
+a[href]:hover   { text-decoration: underline;       }
+
+#monitor {
+    background-color: DimGray;
+}
+
+#footer {
+    background-color: #232323;
+    color:            #979797;
+    text-align:       center;
+    padding:          0.5em;
+
+    width:            100%;
+    height:           3em;
+
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: FloralWhite;
+}
+
+.group {
+    background-color: #232323;
+    margin:           1.6em;
+    padding:          0.8em;
+}
+
+.groupCaption {
+    background-color: FloralWhite;
+    color:            #232323;
+    text-align:       center;
+    font-size:        150%;
+}
+
+.groupBody {
+    padding:          0.8em;
+}
+
+.counterEntry {
+//    background-color: #AAAAFF;
+}
+
+.counterName {
+//    background-color: DeepSkyBlue;
+    color:            #87CEEB;
+    text-align:       left;
+    padding:          0.2em;
+}
+
+.counterValue {
+//    background-color: DodgerBlue;
+    color:            #79F1C9;
+    text-align:       right;
+    padding:          0.2em;
+}

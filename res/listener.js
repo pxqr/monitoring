@@ -36,6 +36,7 @@ function createGroup(gid)
     gelem.appendChild(gcap);
 
     var gbody = document.createElement("table");
+    gbody.setAttribute("class", "groupBody");
     gbody.setAttribute("id", gid);
     gelem.appendChild(gbody);
 
