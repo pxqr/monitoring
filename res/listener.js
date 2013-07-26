@@ -26,8 +26,6 @@ function toggleGroup(gid)
 
 function createGroup(gid)
 {
-    console.log("adding " + gid);
-
     var gelem = document.createElement("div");
     gelem.setAttribute("class", "group");
 
@@ -49,8 +47,6 @@ function createGroup(gid)
 
 function removeGroup(gid)
 {
-    console.log("removing " + gid);
-
     var monitor = getElementById("monitor");
     var group   = getElementById(gid);
     monitor.removeChild(group);
@@ -69,8 +65,6 @@ function toggleGraph(cid)
 
 function createCounter(gid, cid)
 {
-    console.log("adding counter " + cid);
-
     var celem = document.createElement("tr");
     celem.setAttribute("id", cid);
     celem.setAttribute("class", "counterEntry");
@@ -87,15 +81,12 @@ function createCounter(gid, cid)
 function getCounterValue(gid, cid)
 {
     var celem = document.getElementById(cid);
-    console.log("get counter " + celem);
     var counter = celem ? celem : createCounter(gid, cid);
     return counter.getElementsByClassName("counterValue")[0];
 }
 
 function updateGroup(gid, counters)
 {
-    console.log("refresh " + gid);
-
     for (var cid in counters) {
         var celem = getCounterValue(gid, cid);
         celem.innerHTML = counters[cid];
@@ -105,8 +96,6 @@ function updateGroup(gid, counters)
 function eventHandler(ev)
 {
     var msg = JSON.parse(ev.data);
-    console.log("event handler " + msg);
-
     if (msg.Update) {
         updateGroup(msg.Update[0], msg.Update[1]);
     } else if (msg.Remove) {
@@ -119,9 +108,7 @@ function eventHandler(ev)
 // TODO leak?
 function reconnect(port)
 {
-    console.log("reconnect " + port)
     var interval = 1000;
-
     return function () {
         setTimeout(function () { listenEvents(port); }, interval);
     }

@@ -75,12 +75,10 @@ notifier sink stream blackList = forever $ do
   bl <- readTVarIO blackList
   unless (eventGroup ev `HS.member` bl) $ do
     sendSink sink $ textData ev
-    print ev
 
 subscriber :: BlackList -> WebSockets Hybi00 ()
 subscriber blackList = forever $ do
   sub <- receiveData
-  liftIO $ appendFile "/tmp/a" $ show sub
   liftIO $ atomically $ modifyTVar' blackList $ case sub of
     Subscribe   gid -> HS.delete gid
     Unsubscribe gid -> HS.insert gid
