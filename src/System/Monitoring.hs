@@ -125,22 +125,29 @@ mkYesod "Monitor" [parseRoutes|
 
 getHomeR :: Handler RepHtml
 getHomeR = defaultLayout $ do
-  addStylesheet $ StaticR style_css
-  addScript     $ StaticR listener_js
+  addScript     $ StaticR js_listener_js
+  addScript     $ StaticR js_utils_js
   setTitle "monitoring"
-  homeW
+  toWidgetHead styleW
+  toWidgetBody homeW
 
-homeW :: Widget
-homeW = do
-  toWidgetHead [hamlet|
-    <link rel="icon" href=@{StaticR favicon_png} type="image/png">
-    |]
-  [whamlet|
-<body onload="listenEvents(4000)">
+
+--styleW :: Html
+styleW = [hamlet|
+<link rel="icon" href=@{StaticR img_favicon_png} type="image/png">
+<link rel="stylesheet" type="text/css" title="ocean"
+      href=@{StaticR css_ocean_css}>
+<link rel="alternate stylesheet" type="text/css" title="charcoal"
+      href=@{StaticR css_charcoal_css}>
+|]
+
+--homeW :: Html
+homeW = [hamlet|
+<body onload="loadPage()">
   <div id="header">
     Style
-    <a href="#" onclick="setStyle('Ocean')">    Ocean
-    <a href="#" onclick="setStyle('Charcoal')"> Charcoal
+    <a href="#" onclick="setStyle('ocean')">    Ocean
+    <a href="#" onclick="setStyle('charcoal')"> Charcoal
   <div id="monitor">
   <div id="footer">
     <p> Produced by
