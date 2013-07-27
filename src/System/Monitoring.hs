@@ -151,7 +151,7 @@ homeW = do
 |]
 
 newMonitor :: IO Monitor
-newMonitor = Monitor <$> newTChanIO
+newMonitor = Monitor <$> newBroadcastTChanIO
                      <*> newTVarIO HM.empty
                      <*> static STATIC_DIR
 
