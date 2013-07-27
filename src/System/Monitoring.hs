@@ -128,28 +128,22 @@ getHomeR = defaultLayout $ do
   addStylesheet $ StaticR style_css
   addScript     $ StaticR listener_js
   setTitle "monitoring"
-  headerW
   homeW
-  footerW
-
-headerW :: Widget
-headerW = [whamlet|
-<div id="header">
-  Style
-  <a href="#" onclick="setStyle('Ocean')">    Ocean
-  <a href="#" onclick="setStyle('Charcoal')"> Charcoal
-|]
 
 homeW :: Widget
-homeW = [whamlet|
+homeW = do
+  toWidgetHead [hamlet|
+    <link rel="icon" href=@{StaticR favicon_png} type="image/png">
+    |]
+  [whamlet|
 <body onload="listenEvents(4000)">
+  <div id="header">
+    Style
+    <a href="#" onclick="setStyle('Ocean')">    Ocean
+    <a href="#" onclick="setStyle('Charcoal')"> Charcoal
   <div id="monitor">
-|]
-
-footerW :: Widget
-footerW = [whamlet|
-<div id="footer">
-  <p> Produced by
+  <div id="footer">
+    <p> Produced by
       <a href="http://www.yesodweb.com"> Yesod
       and
       <a href="https://github.com/pxqr/monitoring"> monitoring

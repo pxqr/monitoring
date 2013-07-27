@@ -9,7 +9,7 @@ import Data.Aeson
 
 work :: Monitor -> Int -> Int -> IO ()
 work ch i n = do
-  signalEvent ch $ Update "main" $ HM.fromList
+  signalEvent ch $ Update "Workload" $ HM.fromList
     [ ("iteration", toJSON n)
     , ("interval" , toJSON i)
     ]
