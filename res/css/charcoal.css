@@ -3,7 +3,7 @@ charcoal gray: #232323;
 */
 
 body {
-    background-color: DimGray;
+    background-color: #232323;
     margin:           0em;
 }
 
@@ -11,15 +11,29 @@ a[href]:link    { color:           rgb(196,69,29);  }
 a[href]:visited { color:           rgb(171,105,84); }
 a[href]:hover   { text-decoration: underline;       }
 
+#header {
+    background-color: #303030;
+    color:            FloralWhite;
+    padding:          0.2em;
+    text-align:       right;
+    border-top:       5px solid #AABBAA;
+}
+
 #monitor {
-    background-color: DimGray;
+    padding-top:      4em;
+    padding-bottom:   4em;
+    padding-left:     2em;
+    padding-right:    2em;
 }
 
 #footer {
     background-color: #232323;
     color:            #979797;
     text-align:       center;
+
     padding:          0.5em;
+    bottom:           0;
+    position:         absolute;
 
     width:            100%;
     height:           3em;
@@ -31,15 +45,16 @@ a[href]:hover   { text-decoration: underline;       }
 
 .group {
     background-color: #232323;
-    margin:           1.6em;
-    padding:          0.8em;
+    padding-top:      0.8em;
 }
 
 .groupCaption {
-    background-color: FloralWhite;
-    color:            #232323;
-    text-align:       center;
-    font-size:        150%;
+    color:            FloralWhite;
+    font-size:        180%;
+    font-weigth:      bold;
+    text-align:       left;
+    border-bottom:    1px solid #888;
+    padding-left:     1.5em;
 }
 
 .groupBody {
@@ -54,6 +69,7 @@ a[href]:hover   { text-decoration: underline;       }
 //    background-color: DeepSkyBlue;
     color:            #87CEEB;
     text-align:       left;
+    min-width:        15em;
     padding:          0.2em;
 }
 
@@ -61,5 +77,6 @@ a[href]:hover   { text-decoration: underline;       }
 //    background-color: DodgerBlue;
     color:            #79F1C9;
     text-align:       right;
+    min-width:        10em;
     padding:          0.2em;
 }
