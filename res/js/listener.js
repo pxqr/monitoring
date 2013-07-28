@@ -201,14 +201,39 @@ Group.prototype.unsubscribe = function ()
     sock.send(JSON.stringify(msg));
 }
 
-Group.prototype.toggle = function ()
+Group.prototype.isVisible = function()
 {
-    if (this.body.style.display == "none") {
+    return this.body.style.display != "none";
+}
+
+Group.prototype.show = function()
+{
+    this.subscribe();
+    this.body.style.display = "block";
+}
+
+Group.prototype.hide = function()
+{
+    this.unsubscribe();
+    this.body.style.display = "none";
+}
+
+Group.prototype.sync = function ()
+{
+    console.log("sync " + this.isVisible());
+    if (this.isVisible()) {
         this.subscribe();
-        this.body.style.display = "block";
     } else {
         this.unsubscribe();
-        this.body.style.display = "none";
+    }
+}
+
+Group.prototype.toggle = function ()
+{
+    if (this.isVisible()) {
+        this.hide();
+    } else {
+        this.show();
     }
 }
 
@@ -273,7 +298,14 @@ Monitor.prototype.getGroup = function(gid)
 
 Monitor.prototype.removeGroup = function(gid)
 {
+    console.log("remove group not implemented");
+}
 
+function syncAll(m)
+{
+    for (var gid in m.groups) {
+        m.groups[gid].sync();
+    }
 }
 
 function handleEvent(m, ev)
@@ -298,15 +330,18 @@ function runMonitor(port)
     moni = m;
     var interval = 1000;
 
-    if ("WebSocket" in window) {
-        var url = "ws://localhost:" + port;
-        var ws  = new WebSocket(url);
+    var connect = function () {
+        if ("WebSocket" in window) {
+            var url = "ws://localhost:" + port;
+            var ws  = new WebSocket(url);
 
-        ws.onopen    = function()   { sock = ws; };
-        ws.onmessage = function(ev) { handleEvent(m, ev) };
-        ws.onclose   = function()   { setTimeout(m.listen, m.interval); };
-        ws.onerror   = console.log;
-    } else {
-        alert("WebSocket NOT supported by your Browser!");
+            ws.onopen    = function()   { sock = ws; syncAll(m); };
+            ws.onmessage = function(ev) { handleEvent(m, ev) };
+            ws.onclose   = function()   { setTimeout(connect, interval); };
+            ws.onerror   = console.log;
+        } else {
+            alert("WebSocket NOT supported by your Browser!");
+        }
     }
+    connect();
 }
