@@ -1,130 +1,249 @@
-var sock = null;
+/*----------------------------------------------------------------------
+  Counter
+----------------------------------------------------------------------*/
 
-function unsubscribeGroup(gid)
+function Counter(name)
 {
-    var msg = { Unsubscribe : gid };
+    this.value = null;
+
+    this.root = document.createElement("tr");
+    this.root.className = "counterEntry";
+    this.root.onclick   = undefined;
+
+    this.name = document.createElement("td");
+    this.name.className = "counterName";
+    this.name.innerHTML = name;
+    this.root.appendChild(this.name);
+
+    this.val = document.createElement("td");
+    this.val.className = "counterValue";
+    this.val.innerHTML = "N/A";
+    this.root.appendChild(this.val);
+}
+
+Counter.prototype.getValue = function()
+{
+    return this.value;
+}
+
+Counter.prototype.setValue = function(v)
+{
+    this.val.innerHTML = v;
+    this.value = v;
+}
+
+/*----------------------------------------------------------------------
+  Gauge
+----------------------------------------------------------------------*/
+
+function Gauge(name)
+{
+    this.id    = name;
+    this.value = null;
+
+    this.min   = null;
+    this.max   = null;
+    this.slope = null;
+
+    this.root = document.createElement("tr");
+    this.root.className = "gaugeEntry";
+    this.root.onclick   = undefined;
+
+    this.name = document.createElement("td");
+    this.name.className = "gaugeName";
+    this.name.innerHTML = name;
+    this.root.appendChild(this.name);
+
+    this.valueElem = document.createElement("td");
+    this.valueElem.className = "gaugeValue";
+    this.valueElem.innerHTML = "N/A";
+    this.root.appendChild(this.valueElem);
+
+    this.minElem = document.createElement("td");
+    this.minElem.className = "gaugeMin";
+    this.minElem.innerHTML = "N/A";
+    this.root.appendChild(this.minElem);
+
+    this.maxElem = document.createElement("td");
+    this.maxElem.className = "gaugeMax";
+    this.maxElem.innerHTML = "N/A";
+    this.root.appendChild(this.maxElem);
+
+    this.slopeElem = document.createElement("td");
+    this.slopeElem.className = "gaugeSlope";
+    this.slopeElem.innerHTML = "N/A";
+    this.root.appendChild(this.slopeElem);
+}
+
+Gauge.prototype.getValue = function()
+{
+    return this.value;
+}
+
+Gauge.prototype.setValue = function(v)
+{
+    this.min   = Math.min(this.min, v);
+    this.max   = Math.max(this.max, v);
+    this.slope = v - this.value;
+    this.value = v;
+
+    this.valueElem.innerHTML = v;
+    this.minElem.innerHTML   = this.min;
+    this.maxElem.innerHTML   = this.max;
+    this.slopeElem.innerHTML = this.slope;
+}
+
+/*----------------------------------------------------------------------
+  Group
+----------------------------------------------------------------------*/
+
+function Group(gid)
+{
+    this.id       = gid;
+    this.counters = {};
+
+    this.root = document.createElement("div");
+    this.root.className = "group";
+
+    this.caption = document.createElement("div");
+    this.caption.className = "groupCaption";
+    var self = this;
+    this.caption.onclick   = function () { self.toggle(); };
+    this.caption.innerHTML = gid;
+    this.root.appendChild(this.caption);
+
+    this.body = document.createElement("table");
+    this.body.className = "groupBody";
+    this.root.appendChild(this.body);
+
+    this.header = document.createElement("thead");
+    this.header.className = "groupHeader";
+    this.header.innerHTML = "<tr><th>name</th>\
+                          <th>value</th>\
+                          <th>min</th>\
+                          <th>max</th>\
+                          <th>slope</th>\
+                          </tr>";
+    this.body.appendChild(this.header);
+}
+
+Group.prototype.subscribe = function ()
+{
+    var msg = { Subscribe : this.id };
     sock.send(JSON.stringify(msg));
 }
 
-function subscribeGroup(gid)
+Group.prototype.unsubscribe = function ()
 {
-    var msg = { Subscribe : gid };
+    var msg = { Unsubscribe : this.id };
     sock.send(JSON.stringify(msg));
 }
 
-function toggleGroup(gid)
+Group.prototype.toggle = function ()
 {
-    var gbody = document.getElementById(gid);
-    if (gbody.style.display == "none") {
-        subscribeGroup(gid);
-        gbody.style.display = "block";
+    if (this.body.style.display == "none") {
+        this.subscribe();
+        this.body.style.display = "block";
     } else {
-        unsubscribeGroup(gid);
-        gbody.style.display = "none";
+        this.unsubscribe();
+        this.body.style.display = "none";
     }
 }
 
-function createGroup(gid)
-{
-    var gelem = document.createElement("div");
-    gelem.setAttribute("class", "group");
-
-    var gcap = document.createElement("div");
-    gcap.setAttribute("class", "groupCaption");
-    gcap.setAttribute("onclick", "toggleGroup('" + gid + "')");
-    gcap.innerHTML = gid;
-    gelem.appendChild(gcap);
-
-    var gbody = document.createElement("table");
-    gbody.setAttribute("class", "groupBody");
-    gbody.setAttribute("id", gid);
-    gelem.appendChild(gbody);
-
-    var monitor = document.getElementById("monitor");
-    monitor.appendChild(gelem);
-
-    return gbody;
-}
-
-function removeGroup(gid)
+Group.prototype.remove = function()
 {
     var monitor = getElementById("monitor");
-    var group   = getElementById(gid);
+    var group   = getElementById(this.id);
     monitor.removeChild(group);
 }
 
-function getGroup(gid)
+Group.prototype.addCounter = function(cid)
 {
-    var gelem = document.getElementById(gid);
-    return gelem ? gelem : createGroup(gid);
+    // TODO FIXME
+    var counter = cid.length > 15 ? new Gauge(cid): new Counter(cid);
+    this.body.appendChild(counter.root);
+    this.counters[cid] = counter;
+    return counter;
 }
 
-function toggleGraph(cid)
+Group.prototype.getCounter = function(cid)
 {
-    var celem = document.getElementById(cid);
+    var counter = this.counters[cid];
+    return counter ? counter : this.addCounter(cid);
 }
 
-function createCounter(gid, cid)
+Group.prototype.removeCounter = function()
 {
-    var celem = document.createElement("tr");
-    celem.setAttribute("id", cid);
-    celem.setAttribute("class", "counterEntry");
-    celem.setAttribute("onclick", "toggleGraph('" + cid + "')");
-    celem.innerHTML =
-        "<td class='counterName'>" + cid + "</td>\
-         <td class='counterValue'>   N/A    </td>"
-
-    var gelem = getGroup(gid);
-    gelem.appendChild(celem);
-    return celem;
+    console.log("not implemented");
 }
 
-function getCounterValue(gid, cid)
+Group.prototype.update = function(updates)
 {
-    var celem = document.getElementById(cid);
-    var counter = celem ? celem : createCounter(gid, cid);
-    return counter.getElementsByClassName("counterValue")[0];
-}
-
-function updateGroup(gid, counters)
-{
-    for (var cid in counters) {
-        var celem = getCounterValue(gid, cid);
-        celem.innerHTML = counters[cid];
+    for (var cid in updates) {
+        this.getCounter(cid)
+            .setValue(updates[cid]);
     }
 }
 
-function eventHandler(ev)
+/*----------------------------------------------------------------------
+  Monitor
+----------------------------------------------------------------------*/
+
+function Monitor(port)
+{
+    this.groups = {};
+    this.root   = document.getElementById("monitor");
+}
+
+Monitor.prototype.addGroup = function(gid)
+{
+    var group = new Group(gid);
+    this.root.appendChild(group.root);
+    this.groups[gid] = group;
+    return group;
+}
+
+Monitor.prototype.getGroup = function(gid)
+{
+    var group = this.groups[gid];
+    return group ? group : this.addGroup(gid);
+}
+
+Monitor.prototype.removeGroup = function(gid)
+{
+
+}
+
+function handleEvent(m, ev)
 {
     var msg = JSON.parse(ev.data);
     if (msg.Update) {
-        updateGroup(msg.Update[0], msg.Update[1]);
+        m.getGroup(msg.Update[0]).update(msg.Update[1]);
     } else if (msg.Remove) {
-        removeGroup(msg.Remove[0]);
+        m.removeGroup(msg.Remove[0]);
     } else {
-        consol.log("unknown message " + msg);
+        console.log("unknown message " + msg);
     }
 }
 
-// TODO leak?
-function reconnect(port)
+// for debugging
+var sock = undefined;
+var moni = null;
+
+function runMonitor(port)
 {
+    var m = new Monitor(port);
+    moni = m;
     var interval = 1000;
-    return function () {
-        setTimeout(function () { listenEvents(port); }, interval);
-    }
-}
 
-function listenEvents(port)
-{
     if ("WebSocket" in window) {
-        var ws = new WebSocket("ws://localhost:" + port);
-        ws.onopen = function() {
-            sock = ws;
-        };
-        ws.onmessage = eventHandler;
-        ws.onclose   = reconnect(port);
-        ws.onerror   = console.log
+        var url = "ws://localhost:" + port;
+        var ws  = new WebSocket(url);
+
+        ws.onopen    = function()   { sock = ws; };
+        ws.onmessage = function(ev) { handleEvent(m, ev) };
+        ws.onclose   = function()   { setTimeout(m.listen, m.interval); };
+        ws.onerror   = console.log;
     } else {
         alert("WebSocket NOT supported by your Browser!");
     }

@@ -48,5 +48,5 @@ function setCookie(name, value)
 function loadPage()
 {
     setStyleFromCookie();
-    listenEvents(4000);
+    runMonitor(4000);
 }

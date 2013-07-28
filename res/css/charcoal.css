@@ -57,16 +57,18 @@ a[href]:hover   { text-decoration: underline;       }
     padding-left:     1.5em;
 }
 
+.groupHeader {
+    color:            rgb(171,105,84);
+    padding:          0.3em;
+}
+
 .groupBody {
     padding:          0.8em;
 }
 
-.counterEntry {
-//    background-color: #AAAAFF;
-}
+.counterEntry {}
 
 .counterName {
-//    background-color: DeepSkyBlue;
     color:            #87CEEB;
     text-align:       left;
     min-width:        15em;
@@ -74,8 +76,44 @@ a[href]:hover   { text-decoration: underline;       }
 }
 
 .counterValue {
-//    background-color: DodgerBlue;
     color:            #79F1C9;
+    text-align:       right;
+    min-width:        10em;
+    padding:          0.2em;
+}
+
+.gaugeEntry {}
+
+.gaugeName {
+    color:            #008FAA;
+    text-align:       right;
+    min-width:        15em;
+    padding:          0.2em;
+}
+
+.gaugeValue {
+    color:            #40E0D0;
+    text-align:       right;
+    min-width:        10em;
+    padding:          0.2em;
+}
+
+.gaugeSlope {
+    color:            #40E0D0;
+    text-align:       right;
+    min-width:        10em;
+    padding:          0.2em;
+}
+
+.gaugeMin {
+    color:            #40E0D0;
+    text-align:       right;
+    min-width:        10em;
+    padding:          0.2em;
+}
+
+.gaugeMax {
+    color:            #40E0D0;
     text-align:       right;
     min-width:        10em;
     padding:          0.2em;
