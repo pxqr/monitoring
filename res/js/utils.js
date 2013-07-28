@@ -45,8 +45,8 @@ function setCookie(name, value)
     document.cookie = name + "=" + value + ";";
 }
 
-function loadPage()
+function loadPage(port)
 {
     setStyleFromCookie();
-    runMonitor(4000);
+    runMonitor(port);
 }

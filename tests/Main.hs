@@ -18,6 +18,6 @@ work ch i n = do
 
 main :: IO ()
 main = do
-  ch <- monitoring 3000
+  ch <- monitoring 3000 (Config 3001)
   rtsStats ch
   work ch 100000 0

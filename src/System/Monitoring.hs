@@ -4,9 +4,12 @@
 {-# LANGUAGE QuasiQuotes           #-}
 {-# LANGUAGE TemplateHaskell       #-}
 module System.Monitoring
-       ( monitoring
+       ( -- * Server
+         monitoring
+       , Monitor(..), Config(..)
+
+         -- * Events
        , signalEvent
-       , Monitor(..)
        , Event(..)
        , EventStream
        ) where
@@ -104,11 +107,17 @@ app Monitor {..} req = do
   subscriber blackList
 
 eventServer :: Monitor -> IO ()
-eventServer m = runServer "0" 4000 (app m)
+eventServer m @ Monitor {..} = runServer "0" port (app m)
+  where
+    port = fromIntegral (websockPort config)
 
+data Config = Config
+  { websockPort :: PortNumber
+  } deriving (Show, Eq, Ord)
 
 data Monitor = Monitor
-  { signal    :: EventStream
+  { config    :: Config
+  , signal    :: EventStream
   , cached    :: TVar (HashMap GroupId Object)
   , getStatic :: Static
   }
@@ -124,11 +133,12 @@ mkYesod "Monitor" [parseRoutes|
 
 getHomeR :: Handler RepHtml
 getHomeR = defaultLayout $ do
+  Monitor { config = Config{..} } <- getYesod
   addScript     $ StaticR js_listener_js
   addScript     $ StaticR js_utils_js
   setTitle "monitoring"
   toWidgetHead styleW
-  toWidgetBody homeW
+  toWidgetBody $ homeW (fromIntegral websockPort :: Int)
 
 
 --styleW :: Html
@@ -140,9 +150,9 @@ styleW = [hamlet|
       href=@{StaticR css_charcoal_css}>
 |]
 
---homeW :: Html
-homeW = [hamlet|
-<body onload="loadPage()">
+--homeW :: PortNumber -> RepHtml
+homeW port = [hamlet|
+<body onload="loadPage(#{port})">
   <div id="header">
     Style
     <a href="#" onclick="setStyle('ocean')">    Ocean
@@ -156,15 +166,15 @@ homeW = [hamlet|
       version #{showVersion version}
 |]
 
-newMonitor :: IO Monitor
-newMonitor = Monitor <$> newBroadcastTChanIO
-                     <*> newTVarIO HM.empty
-                     <*> static STATIC_DIR
+newMonitor :: Config -> IO Monitor
+newMonitor config = Monitor config
+  <$> newBroadcastTChanIO
+  <*> newTVarIO HM.empty
+  <*> static STATIC_DIR
 
-
-monitoring :: PortNumber -> IO Monitor
-monitoring port = do
-  m <- newMonitor
+monitoring :: PortNumber -> Config -> IO Monitor
+monitoring port config = do
+  m <- newMonitor config
   forkIO $ eventServer m
   forkIO $ warp (fromIntegral port) m
   return m
