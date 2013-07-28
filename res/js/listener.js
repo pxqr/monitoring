@@ -63,6 +63,7 @@ function Counter(name)
 
     this.name = document.createElement("td");
     this.name.className = "counterName";
+    this.name.title     = "counter";
     this.name.innerHTML = name;
     this.root.appendChild(this.name);
 
@@ -79,8 +80,9 @@ Counter.prototype.getValue = function()
 
 Counter.prototype.setValue = function(v)
 {
-    this.val.innerHTML = format(v, this.unit);
     this.value = v;
+    this.val.innerHTML = format(v, this.unit);
+    this.val.title     = this.value;
 }
 
 /*----------------------------------------------------------------------
@@ -103,6 +105,7 @@ function Gauge(name)
 
     this.name = document.createElement("td");
     this.name.className = "gaugeName";
+    this.name.title     = "gauge";
     this.name.innerHTML = name;
     this.root.appendChild(this.name);
 
@@ -140,9 +143,16 @@ Gauge.prototype.setValue = function(v)
     this.value = v;
 
     this.valueElem.innerHTML = format(this.value, this.unit);
+    this.valueElem.title     = this.value;
+
     this.minElem.innerHTML   = format(this.min  , this.unit);
+    this.minElem.title       = this.min;
+
     this.maxElem.innerHTML   = format(this.max  , this.unit);
+    this.maxElem.title       = this.max;
+
     this.slopeElem.innerHTML = format(this.slope, this.unit);
+    this.slopeElem.title     = this.slope;
 }
 
 /*----------------------------------------------------------------------
