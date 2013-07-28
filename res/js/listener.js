@@ -21,25 +21,25 @@ function shortUnit(u)
 function normalize(v)
 {
     if         (v > 1000000000000) {
-        return (v / 1000000000000) + 'T';
+        return (v / 1000000000000).toFixed(3) + 'T';
     } else if  (v > 1000000000) {
-        return (v / 1000000000)    + 'G';
+        return (v / 1000000000).toFixed(3)    + 'G';
     } else if  (v > 1000000) {
-        return (v / 1000000)       + 'M';
+        return (v / 1000000).toFixed(3)       + 'M';
     } else if  (v > 1000) {
-        return (v / 1000)          + 'K';
+        return (v / 1000).toFixed(3)          + 'K';
     } else if  (v == 0) {
         return v + '';
     } else if  (v < 0.000000000001) {
-        return (v * 0001000000000) + 'p';
+        return (v * 0001000000000).toFixed(3) + 'p';
     } else if  (v < 0.000000001) {
-        return (v * 1000000000)    + 'n';
+        return (v * 1000000000).toFixed(3)    + 'n';
     } else if  (v < 0.000001) {
-        return (v * 1000000)       + 'μ';
+        return (v * 1000000).toFixed(3)       + 'μ';
     } else if  (v < 0.001) {
-        return (v * 1000)          + 'm';
+        return (v * 1000).toFixed(3)          + 'm';
     } else {
-        return v + '';
+        return v.toFixed(3) + '';
     }
 }
 
