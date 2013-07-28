@@ -1,3 +1,53 @@
+var unit = {
+    None    : 0,
+    Seconds : 1,
+    Bytes   : 2
+};
+
+function shortUnit(u)
+{
+    if (u == unit.None) {
+        return '';
+    } else if (u == unit.Seconds) {
+        return 'sec';
+    } else if (u == unit.Bytes) {
+        return 'B';
+    } else {
+        return '?';
+    }
+}
+
+
+function normalize(v)
+{
+    if         (v > 1000000000000) {
+        return (v / 1000000000000) + 'T';
+    } else if  (v > 1000000000) {
+        return (v / 1000000000)    + 'G';
+    } else if  (v > 1000000) {
+        return (v / 1000000)       + 'M';
+    } else if  (v > 1000) {
+        return (v / 1000)          + 'K';
+    } else if  (v == 0) {
+        return v + '';
+    } else if  (v < 0.000000000001) {
+        return (v * 0001000000000) + 'p';
+    } else if  (v < 0.000000001) {
+        return (v * 1000000000)    + 'n';
+    } else if  (v < 0.000001) {
+        return (v * 1000000)       + 'μ';
+    } else if  (v < 0.001) {
+        return (v * 1000)          + 'm';
+    } else {
+        return v + '';
+    }
+}
+
+function format(v, u)
+{
+    return normalize(v) + shortUnit(u);
+}
+
 /*----------------------------------------------------------------------
   Counter
 ----------------------------------------------------------------------*/
@@ -5,6 +55,7 @@
 function Counter(name)
 {
     this.value = null;
+    this.unit  = unit.None;
 
     this.root = document.createElement("tr");
     this.root.className = "counterEntry";
@@ -28,7 +79,7 @@ Counter.prototype.getValue = function()
 
 Counter.prototype.setValue = function(v)
 {
-    this.val.innerHTML = v;
+    this.val.innerHTML = format(v, this.unit);
     this.value = v;
 }
 
@@ -40,6 +91,7 @@ function Gauge(name)
 {
     this.id    = name;
     this.value = null;
+    this.unit  = unit.None;
 
     this.min   = null;
     this.max   = null;
@@ -87,10 +139,10 @@ Gauge.prototype.setValue = function(v)
     this.slope = v - this.value;
     this.value = v;
 
-    this.valueElem.innerHTML = v;
-    this.minElem.innerHTML   = this.min;
-    this.maxElem.innerHTML   = this.max;
-    this.slopeElem.innerHTML = this.slope;
+    this.valueElem.innerHTML = format(this.value, this.unit);
+    this.minElem.innerHTML   = format(this.min  , this.unit);
+    this.maxElem.innerHTML   = format(this.max  , this.unit);
+    this.slopeElem.innerHTML = format(this.slope, this.unit);
 }
 
 /*----------------------------------------------------------------------
@@ -160,7 +212,7 @@ Group.prototype.remove = function()
 Group.prototype.addCounter = function(cid)
 {
     // TODO FIXME
-    var counter = cid.length > 15 ? new Gauge(cid): new Counter(cid);
+    var counter = new Gauge(cid);
     this.body.appendChild(counter.root);
     this.counters[cid] = counter;
     return counter;

@@ -103,7 +103,6 @@ app Monitor {..} req = do
   liftIO $ forkIO $ notifier sink ch' blackList
   subscriber blackList
 
-
 eventServer :: Monitor -> IO ()
 eventServer m = runServer "0" 4000 (app m)
 
